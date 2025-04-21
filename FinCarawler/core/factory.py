@@ -2,29 +2,28 @@ from __future__ import annotations
 
 from typing import TypeVar, Generic, TYPE_CHECKING, Type
 
-from Finalyzer.Carawler.core.base import (
-    BaseDTO,
-    crawlerInterface,
-    processorInterface,
+from FinCarawler.core.base import (
+    CrawlerInterface,
+    ProcessorInterface,
 )
-
-
-ProcessorConfig_T = TypeVar("ProcessorConfig_T", bound="BaseDTO")
-CrawlerResult_T = TypeVar("CrawlerResult_T", bound="BaseDTO")
+from FinCarawler.core.dto import (
+    ProcessorConfigDTO,
+    ProcessorResultDTO
+)
 
 
 class CrawlerGenerator:
 
     def __init__(self,
-                 crawler: Type[crawlerInterface],
-                 processor: Type[processorInterface],
-                 process_config_DTO: BaseDTO) -> None:
+                 crawler: Type[CrawlerInterface],
+                 processor: Type[ProcessorInterface],
+                 process_config_DTO: ProcessorConfigDTO) -> None:
 
         self.crawler = crawler()
         self.processor = processor()
         self.process_config_DTO = process_config_DTO
 
-    def generate(self) -> BaseDTO:
+    def generate(self) -> ProcessorResultDTO:
 
         crawled_DTO = self.crawler.get_crawled_data()
         processed_data = self.processor.process(crawled_DTO,

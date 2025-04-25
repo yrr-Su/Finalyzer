@@ -6,12 +6,12 @@ from typing import Any
 
 import bs4
 
-from FinCarawler.config import CONFIG
-from FinCarawler.core.base import CrawlerInterface
-from FinCarawler.core.dto import CarawlerResultDTO
+from config.setting import CONFIG
+from FinCrawler.core.base import CrawlerInterface
+from FinCrawler.core.dto import CarawlerResultDTO
 
 
-class thefweCrawler(CrawlerInterface):
+class thefewCrawler(CrawlerInterface):
 
     def __init__(self) -> None:
         super().__init__()
@@ -37,7 +37,7 @@ class thefweCrawler(CrawlerInterface):
 
     def _crawl(self) -> bs4.BeautifulSoup:
         cookies = pickle.load(
-            open(CONFIG.PATH_RESOURCE / 'thefew_cookie.py', "rb"))
+            open(CONFIG.PATH_RESOURCE / 'thefew_cookie.pkl', "rb"))
 
         for cookie in cookies:
             self.session.cookies.set(cookie['name'], cookie['value'])

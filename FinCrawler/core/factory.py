@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import TypeVar, Generic, TYPE_CHECKING, Type
 
-from FinCarawler.core.base import (
+from FinCrawler.core.base import (
     CrawlerInterface,
     ProcessorInterface,
 )
-from FinCarawler.core.dto import (
+from FinCrawler.core.dto import (
     ProcessorConfigDTO,
     ProcessorResultDTO
 )
+from FinCrawler.core.crawler.thefew import thefewCrawler
+from FinCrawler.core.processor.thefew import thefewProcessor
 
 
 class CrawlerGenerator:
@@ -34,5 +36,15 @@ class CrawlerGenerator:
 
 class CrawlerFactory:
 
-    pass
+    @classmethod
+    def create(cls,
+               input_config_DTO: ProcessorConfigDTO,
+               crawler_name: str='thefew',
+               ) -> CrawlerGenerator:
 
+        generator = CrawlerGenerator(crawler=thefewCrawler,
+                                     processor=thefewProcessor,
+                                     process_config_DTO=input_config_DTO
+                                     )
+
+        return generator

@@ -5,14 +5,14 @@ from pandas import DataFrame, to_numeric, to_datetime, read_csv, ExcelWriter
 from openpyxl.styles import Font, Alignment
 from pathlib import Path
 
-from FinCarawler.config import CONFIG
-from FinCarawler.core.base import ProcessorInterface
-from FinCarawler.core.dto import (
+from config.setting import CONFIG
+from FinCrawler.core.base import ProcessorInterface
+from FinCrawler.core.dto import (
     CarawlerResultDTO,
     ProcessorConfigDTO,
     ProcessorResultDTO
 )
-from FinCarawler.tool.excel import ExcelTool
+from FinCrawler.tool.excel import ExcelTool
 
 
 class thefewProcessor(ProcessorInterface):
@@ -133,14 +133,15 @@ class thefewProcessor(ProcessorInterface):
 
                     cell_width = []
                     for cell in worksheet[col_letter]:
+                        cell_value = str(cell.value) if cell.value is not None else ''
 
-                        font_name = "標楷體" if ExcelTool.is_chinese(cell.value) else "Times New Roman"
+                        font_name = "標楷體" if ExcelTool.is_chinese(cell_value) else "Times New Roman"
                         cell.font = Font(name=font_name, size=14)
                         cell.alignment = Alignment(horizontal="center")
 
-                        cell_width.append(ExcelTool.calculate_column_width(cell.value))
+                        cell_width.append(ExcelTool.calculate_column_width(cell_value))
 
-                        if ExcelTool.is_numeric(cell.value) & formated_status:
+                        if ExcelTool.is_numeric(cell_value) & formated_status:
                             cell.number_format = "0.00"
 
                     worksheet.column_dimensions[col_letter].width = max(*cell_width) + 2

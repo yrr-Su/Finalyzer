@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import abc
-import dataclasses
-from typing import Any, TypeVar, Generic
+from typing import Any
 
-from FinCarawler.core.dto import (
+from FinCrawler.core.dto import (
     CarawlerResultDTO,
     ProcessorConfigDTO,
     ProcessorResultDTO

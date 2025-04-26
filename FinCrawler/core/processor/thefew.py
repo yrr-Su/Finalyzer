@@ -22,7 +22,7 @@ class thefewProcessor(ProcessorInterface):
                     crawler_DTO: CarawlerResultDTO,
                     process_config_DTO: ProcessorConfigDTO) -> None:
         self.rules = process_config_DTO.rules
-        self.output = process_config_DTO.output
+        self.output = process_config_DTO.output / process_config_DTO.output_file
 
         self.selected_columns = [
             '名稱', '轉換價值', '百元報價', 'CBAS總價', 'CB 收盤價',
@@ -48,7 +48,7 @@ class thefewProcessor(ProcessorInterface):
         self.df_init.index = to_numeric(self.df_init.index, errors='coerce') # type: ignore
         self.df_init.index.name = 'ID'
 
-        with (CONFIG.PATH_RESOURCE / 'thefew_highest.csv').open(
+        with (CONFIG.PATH_MAIN_RESOURCE / 'thefew_highest.csv').open(
                 'r', encoding='utf-8') as f:
             self.df_highest = read_csv(f, index_col='ID')
             self.df_highest['value'] = to_numeric(self.df_highest['value'],
@@ -115,7 +115,7 @@ class thefewProcessor(ProcessorInterface):
 
     def _beautify_excel(self, dict_df_process: dict[str, DataFrame]) -> Path:
 
-        output_file = self.output / f'{self.name}.xlsx'
+        output_file = self.output
 
         with ExcelWriter(output_file, mode='w') as writer:
             dict_df_process['all'].to_excel(writer, sheet_name='原始資料', index=False)

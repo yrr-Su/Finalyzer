@@ -16,9 +16,13 @@ class config:
 
     OUTPUT: Path = Path(os.getenv('OUTPUT', 'output'))
 
-    PATH_MAIN: Path = Path(str(resources.files('FinCrawler')))
-    PATH_RESOURCE: Path = PATH_MAIN / 'resources'
+    PATH_MAIN_RESOURCE: Path = Path(
+        str(resources.files('FinCrawler').joinpath('resources'))
+        )
+    PATH_APP_RESOURCE: Path = Path(
+        str(resources.files('app').joinpath('resources'))
+        )
 
-
+    DISCORD_BOT: str = os.getenv('DISCORD_BOT', '')
 
 CONFIG = config()

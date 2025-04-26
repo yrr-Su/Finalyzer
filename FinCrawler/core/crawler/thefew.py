@@ -37,7 +37,7 @@ class thefewCrawler(CrawlerInterface):
 
     def _crawl(self) -> bs4.BeautifulSoup:
         cookies = pickle.load(
-            open(CONFIG.PATH_RESOURCE / 'thefew_cookie.pkl', "rb"))
+            open(CONFIG.PATH_MAIN_RESOURCE / 'thefew_cookie.pkl', "rb"))
 
         for cookie in cookies:
             self.session.cookies.set(cookie['name'], cookie['value'])

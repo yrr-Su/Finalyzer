@@ -27,5 +27,6 @@ class CrawlerBuilder:
                 )
             )
         result_dto = generator.generate()
+        print(f"\nProcess result:\n\t{result_dto.result.name}")
 
         return result_dto.result

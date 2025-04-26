@@ -41,6 +41,7 @@ class CrawlerInterface(abc.ABC):
 
 
 class ProcessorInterface(abc.ABC):
+    name = None
 
     @abc.abstractmethod
     def process(self,

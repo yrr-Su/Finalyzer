@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TypeVar, Generic, TYPE_CHECKING, Type
+from typing import Type
 
 from FinCrawler.core.base import (
     CrawlerInterface,
@@ -26,8 +26,10 @@ class CrawlerGenerator:
         self.process_config_DTO = process_config_DTO
 
     def generate(self) -> ProcessorResultDTO:
-
+        print(f"Start crawling:\n\t{self.crawler._crawl_name}...")
         crawled_DTO = self.crawler.get_crawled_data()
+
+        print(f"\nStart processing:\n\t{self.processor.name}...")
         processed_data = self.processor.process(crawled_DTO,
                                                 self.process_config_DTO)
         return processed_data

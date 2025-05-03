@@ -8,9 +8,16 @@ from pathlib import Path
 
 from datetime import datetime
 
-@dataclass
-class BaseDTO:
-    pass
+from config.setting import CONFIG
+
+__all__ = [
+    "BaseDTO",
+    "CarawlerResultDTO",
+    "ProcessorConfigDTO",
+    "thefewProcessorConfigDTO",
+    "ProcessorResultDTO",
+]
+
 
 
 def _parse_suffix(ori_rules: dict, update_rules: dict) -> str:
@@ -40,10 +47,9 @@ def _parse_suffix(ori_rules: dict, update_rules: dict) -> str:
     return '_'.join(suffix)
 
 
-
-
-
-
+@dataclass
+class BaseDTO:
+    pass
 
 @dataclass
 class CarawlerResultDTO(BaseDTO):
@@ -64,15 +70,14 @@ class thefewProcessorConfigDTO(ProcessorConfigDTO):
     rules: dict = field(default_factory=dict, init=False)
 
     def __post_init__(self) -> None:
-        self.rules = {
-            '剩餘天數': 100,
-            '已轉換 (%)': 30,
-            '轉換價值': [75, 120],
-            '轉換溢價率 (%)': 3,
-            '發債位階': 70,
-            '收盤位階': 65,
-            'CB 收盤價': [75, 120]
-            }
+        for key, value in self.update_rules.items():
+            if '-' in value:
+                self.update_rules[key] = [float(_value) for _value in value.split('-')]
+            else:
+
+                self.update_rules[key] = float(value)
+
+        self.rules = CONFIG.DEFAULT_THEFEW_PARAMS_DIGIT.copy()
         allow_keys = set(self.rules.keys())
         update_keys = set(self.update_rules.keys())
 
@@ -85,10 +90,6 @@ class thefewProcessorConfigDTO(ProcessorConfigDTO):
                                    self.update_rules)
 
         self.output_file = f"選擇權_{suffix_str}.xlsx"
-
-
-
-
 
 
 @dataclass

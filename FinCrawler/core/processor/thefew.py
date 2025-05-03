@@ -86,7 +86,6 @@ class thefewProcessor(ProcessorInterface):
 
 
     def _process_filter(self, df_process: DataFrame) -> dict[str, DataFrame]:
-
         process_without_highest = (
             (df_process['剩餘天數'] >= self.rules['剩餘天數']) &
             (df_process['已轉換 (%)'] < self.rules['已轉換 (%)']) &
@@ -114,7 +113,6 @@ class thefewProcessor(ProcessorInterface):
             }
 
     def _beautify_excel(self, dict_df_process: dict[str, DataFrame]) -> Path:
-
         output_file = self.output
 
         with ExcelWriter(output_file, mode='w') as writer:

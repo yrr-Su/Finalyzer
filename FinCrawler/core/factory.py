@@ -15,7 +15,6 @@ from FinCrawler.core.processor.thefew import thefewProcessor
 
 
 class CrawlerGenerator:
-
     def __init__(self,
                  crawler: Type[CrawlerInterface],
                  processor: Type[ProcessorInterface],

@@ -1,44 +1,50 @@
 from __future__ import annotations
 
-from pathlib import Path
+import asyncio
 
 import discord
 from discord.ui import Modal, TextInput
 
-print(Path(__file__).parent.resolve())
-PATH_RESOURCE = Path(__file__).parent / '..' / "resource"
-AUTHOR_ICON = discord.File(PATH_RESOURCE / "author_icon.jpg")
-DEFAULT_PARAMS = {
-    '剩餘天數' : '100',
-    '已轉換 (%)' : '30',
-    '轉換價值' : '75-120',
-    '轉換溢價率 (%)' : '3',
-    '發債位階' : '70',
-    '收盤位階' : '65',
-    'CB 收盤價' : '75-120'
-}
-
+from config.setting import CONFIG
+from FinCrawler.builder import CrawlerBuilder
 
 
 class DownloadModal(Modal, title="更動參數表"):
     def __init__(self, select) -> None:
-        super().__init__()
+        super().__init__(timeout=300)
+
+        self.status = 'choose'
+        self.update_param, self.textinput = {}, {}
+        self.default_param = CONFIG.DEFAULT_THEFEW_PARAMS.copy()
+        self.author_icon = discord.File(
+            CONFIG.PATH_APP_RESOURCE / "author_icon.jpg")
+
+        if ('不更改參數' in select) & (len(select) == 1):
+            self.status = 'no_change'
+            self.add_item(TextInput(
+                label="不更改參數",
+                default="請不要點選其他選項",
+                ))
+        else:
+            raise ValueError("請不要點選 '不更改參數' 或是 僅點選 '不更改參數'")
 
         if len(select) > 5:
             raise ValueError("最多只能選擇 5 個選項")
 
-
-        self.param = DEFAULT_PARAMS.copy()
-        for key in select:
-            _input = TextInput(label=key, default=DEFAULT_PARAMS[key])
-            self.add_item(_input)
-
-            self.param[key] = _input.value
-
-
+        if self.status == 'choose':
+            for key in select:
+                self.textinput[key] = TextInput(
+                            label=key,
+                            placeholder=CONFIG.DEFAULT_THEFEW_PARAMS[key]
+                            )
+                self.add_item(self.textinput[key])
 
 
     async def on_submit(self, interaction: discord.Interaction):
+
+        for _key, _textinput in self.textinput.items():
+            self.update_param[_key] = _textinput.value
+
 
         embed = discord.Embed(
             title="參數表",
@@ -50,30 +56,24 @@ class DownloadModal(Modal, title="更動參數表"):
         embed.set_author(
             name="yrr-Su",
             url="https://github.com/yrr-Su",
-            icon_url=f"attachment://{AUTHOR_ICON.filename}"
+            # icon_url=f"attachment://{self.author_icon.filename}"
         )
 
-        # for _param in self.params:
-        #     embed.add_field(name=_param.label, value=_param.value, inline=True)
-
-        DEFAULT_PARAMS.update(self.param)
-        for key, _value in DEFAULT_PARAMS.items():
-            embed.add_field(name=key, value=_value, inline=True)
+        self.default_param.update(self.update_param)
+        for _key, _value in self.default_param.items():
+            embed.add_field(name=_key, value=_value, inline=True)
 
         embed.add_field(name='', value='-'*15, inline=False)
-        # embed.add_field(name="剩餘天數", value=self.param.value, inline=False)
-
-        # embed.add_field(name="參數 A", value=self.input_a.value, inline=False)
-        # embed.add_field(name="參數 B", value=self.input_b.value or "未輸入", inline=False)
-
         embed.set_footer(text="莫急莫慌摸摸茶")
+        await interaction.response.send_message(embed=embed)
 
-        with open("thefew.txt", "w") as f:
-            for key, _value in self.param.items():
-                f.write(f"{key}: {_value}\n")
+        async def _build_and_send() -> None:
+            builder = CrawlerBuilder(rules=self.update_param,
+                                     output=CONFIG.OUTPUT)
+            path_output_file = builder.build()
 
+            file = discord.File(path_output_file,
+                                filename=path_output_file.name)
+            await interaction.followup.send("拿去補啦:", file=file)
 
-        file = discord.File("thefew.txt", filename="thefew.txt")
-
-        await interaction.response.send_message(file=AUTHOR_ICON, embed=embed)
-        await interaction.followup.send("拿去補啦:", file=file)
+        asyncio.create_task(_build_and_send())

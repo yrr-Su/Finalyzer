@@ -16,8 +16,6 @@ class CrawlerBuilder:
         self.rules = rules
         self.output = Path(output)
 
-
-
     def build(self) -> Path:
 
         generator = CrawlerFactory.create(

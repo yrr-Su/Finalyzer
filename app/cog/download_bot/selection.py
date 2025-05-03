@@ -3,11 +3,12 @@ from __future__ import annotations
 import discord
 from discord.ui import View, Select
 
-from .modal import DownloadModal  # type: ignore
+from app.cog.download_bot.modal import DownloadModal
 
 class DownloadSelection(Select):
     def __init__(self) -> None:
         options = [
+            discord.SelectOption(label="不更改參數", description="請不要點選其他選項"),
             discord.SelectOption(label="剩餘天數", description="default: 100"),
             discord.SelectOption(label="已轉換 (%)", description="default: 30"),
             discord.SelectOption(label="轉換價值", description="default: 75-120"),
@@ -25,11 +26,6 @@ class DownloadSelection(Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        # await interaction.response.send_message(
-        #     f"你選擇了欄位：`{', '.join(self.values)}`\n請輸入對應的參數條件～",
-        # )
-        print('callback')
-        print(self.values)
         try:
             await interaction.response.send_modal(DownloadModal(self.values))
         except Exception as e:
@@ -41,6 +37,5 @@ class DownloadSelection(Select):
 class DownloadSelectionView(View):
     def __init__(self) -> None:
         super().__init__()
-        print('init view')
         self.add_item(DownloadSelection())
 

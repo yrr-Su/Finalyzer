@@ -24,24 +24,42 @@ class config:
         )
 
     DISCORD_BOT: str = os.getenv('DISCORD_BOT', '')
-    DEFAULT_THEFEW_PARAMS = {
-        '剩餘天數' : '100',
-        '已轉換 (%)' : '30',
-        '轉換價值' : '75-120',
-        '轉換溢價率 (%)' : '3',
-        '發債位階' : '70',
-        '收盤位階' : '65',
-        'CB 收盤價' : '75-120'
-        }
-    DEFAULT_THEFEW_PARAMS_DIGIT = {
-        '剩餘天數' : 100,
-        '已轉換 (%)' : 30,
-        '轉換價值' : [75, 120],
-        '轉換溢價率 (%)' : 3,
-        '發債位階' : 70,
-        '收盤位階' : 65,
-        'CB 收盤價' : [75, 120]
-        }
+
+    GOOGLE_ACCOUNT: str = os.getenv('GOOGLE_ACCOUNT', '')
+    GOOGLE_PASSWORD: str = os.getenv('GOOGLE_PASSWORD', '')
+
+    THEFEW_PARAMS = {
+        "PARAMS_STR": {
+            '剩餘天數' : '100',
+            '已轉換 (%)' : '30',
+            '轉換價值' : '75-120',
+            '轉換溢價率 (%)' : '3',
+            '發債位階' : '70',
+            '收盤位階' : '65',
+            'CB 收盤價' : '75-120'
+            },
+
+        "PARAMS_DIGIT": {
+            '剩餘天數' : 100,
+            '已轉換 (%)' : 30,
+            '轉換價值' : [75, 120],
+            '轉換溢價率 (%)' : 3,
+            '發債位階' : 70,
+            '收盤位階' : 65,
+            'CB 收盤價' : [75, 120]
+            },
+
+        "PARAMS_SUFFIX": {
+            '剩餘天數': 'Days',
+            '已轉換 (%)': 'Conv',
+            '轉換價值': 'Val',
+            '轉換溢價率 (%)': 'Prem',
+            '發債位階': 'Issue',
+            '收盤位階': 'Close',
+            'CB 收盤價': 'CB'
+            }
+    }
+
 
 
 CONFIG = config()

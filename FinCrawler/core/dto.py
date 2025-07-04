@@ -21,21 +21,13 @@ __all__ = [
 
 
 def _parse_suffix(ori_rules: dict, update_rules: dict) -> str:
-    suffix_name = {
-        '剩餘天數': '剩',
-        '已轉換 (%)': '已轉',
-        '轉換價值': '轉',
-        '轉換溢價率 (%)': '溢',
-        '發債位階': '發',
-        '收盤位階': '收',
-        'CB 收盤價': 'CB'
-    }
+
 
     suffix = [datetime.now().strftime('%Y%m%d')]
 
     for _key in list(update_rules.keys()):
         _value = update_rules[_key]
-        _suffix_key = suffix_name[_key]
+        _suffix_key = CONFIG.THEFEW_PARAMS['PARAMS_SUFFIX'][_key]
 
         if isinstance(_value, list):
             suffix.append(
@@ -74,10 +66,9 @@ class thefewProcessorConfigDTO(ProcessorConfigDTO):
             if '-' in value:
                 self.update_rules[key] = [float(_value) for _value in value.split('-')]
             else:
-
                 self.update_rules[key] = float(value)
 
-        self.rules = CONFIG.DEFAULT_THEFEW_PARAMS_DIGIT.copy()
+        self.rules = CONFIG.THEFEW_PARAMS['PARAMS_DIGIT'].copy()
         allow_keys = set(self.rules.keys())
         update_keys = set(self.update_rules.keys())
 
@@ -89,7 +80,7 @@ class thefewProcessorConfigDTO(ProcessorConfigDTO):
         suffix_str = _parse_suffix(self.rules,
                                    self.update_rules)
 
-        self.output_file = f"選擇權_{suffix_str}.xlsx"
+        self.output_file = f"CBAS_{suffix_str}.xlsx"
 
 
 @dataclass

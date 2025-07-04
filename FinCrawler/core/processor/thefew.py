@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from numpy import nan
-from pandas import DataFrame, to_numeric, to_datetime, read_csv, ExcelWriter
-from openpyxl.styles import Font, Alignment
 from pathlib import Path
+
+from numpy import nan
+from openpyxl.styles import Alignment, Font
+from pandas import DataFrame, ExcelWriter, read_csv, to_datetime, to_numeric
 
 from config.setting import CONFIG
 from FinCrawler.core.base import ProcessorInterface
 from FinCrawler.core.dto import (
     CarawlerResultDTO,
     ProcessorConfigDTO,
-    ProcessorResultDTO
+    ProcessorResultDTO,
 )
 from FinCrawler.tool.excel import ExcelTool
 
@@ -53,7 +54,9 @@ class thefewProcessor(ProcessorInterface):
             self.df_highest = read_csv(f, index_col='ID')
             self.df_highest['value'] = to_numeric(self.df_highest['value'],
                                                   errors='coerce').copy()
-
+            self.df_highest = self.df_highest.loc[
+                ~self.df_highest.index.duplicated(keep='last')
+                ]
             self.df_highest = self.df_highest.reindex(self.df_init.index)
 
 
@@ -141,9 +144,11 @@ class thefewProcessor(ProcessorInterface):
 
                         if ExcelTool.is_numeric(cell_value) & formated_status:
                             cell.number_format = "0.00"
-
-                    worksheet.column_dimensions[col_letter].width = max(*cell_width) + 2
-
+                    try:
+                        max_width = max(*cell_width) if len(cell_width) > 1 else cell_width[0]
+                        worksheet.column_dimensions[col_letter].width = max_width + 2
+                    except Exception:
+                        pass
                 worksheet.freeze_panes = "C2"
 
         return output_file
